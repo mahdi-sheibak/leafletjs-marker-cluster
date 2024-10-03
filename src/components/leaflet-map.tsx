@@ -2,9 +2,7 @@
 import L from "leaflet";
 import type { LatLngExpression } from "leaflet";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import MarkerClusterGroup from "./marker-cluster/marker-cluster-group";
-import "leaflet/dist/leaflet.css";
-
+import { MarkerClusterGroup } from "./marker-cluster-group";
 import { coordinates } from "@/fake-locations";
 
 const position: LatLngExpression = [32.4279, 53.688];
@@ -33,7 +31,7 @@ export function LeafletMap() {
             position={coordinate.position}
             icon={icon}
           >
-            <Popup>this is {coordinate.id} number</Popup>
+            <Popup>this is {coordinate.id}</Popup>
           </Marker>
         ))}
       </MarkerClusterGroup>

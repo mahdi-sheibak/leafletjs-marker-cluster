@@ -6,19 +6,19 @@ import {
   createPathComponent,
   type LeafletContextInterface,
 } from "@react-leaflet/core";
-import L, { type LeafletMouseEventHandlerFn } from "leaflet";
+import L, {
+  LeafletEventHandlerFn,
+  type LeafletMouseEventHandlerFn,
+} from "leaflet";
 import "leaflet.markercluster";
-import "./marker-cluster.css";
-import "./marker-cluster.default.css";
 
-delete (L.Icon.Default as any).prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "/marker-icon-2x.png",
   iconUrl: "/marker-icon.png",
   shadowUrl: "/marker-shadow.png",
 });
 
-type ClusterType = { [key in string]: any };
+type ClusterType = { [key in string]: LeafletEventHandlerFn };
 
 type ClusterEvents = {
   onClick?: LeafletMouseEventHandlerFn;
@@ -37,9 +37,8 @@ type MarkerClusterControl = L.MarkerClusterGroupOptions & {
 function getPropsAndEvents(props: MarkerClusterControl) {
   let clusterProps: ClusterType = {};
   let clusterEvents: ClusterType = {};
-  const { children, ...rest } = props;
-  // Splitting props and events to different objects
-  Object.entries(rest).forEach(([propName, prop]) => {
+
+  Object.entries(props).forEach(([propName, prop]) => {
     if (propName.startsWith("on")) {
       clusterEvents = { ...clusterEvents, [propName]: prop };
     } else {
@@ -59,26 +58,14 @@ function createMarkerClusterGroup(
     const clusterEvent = `cluster${eventAsProp.substring(2).toLowerCase()}`;
     markerClusterGroup.on(clusterEvent, callback);
   });
+
   return createElementObject(
     markerClusterGroup,
     extendContext(context, { layerContainer: markerClusterGroup })
   );
 }
 
-const updateMarkerCluster = (
-  instance: L.MarkerClusterGroup,
-  props: MarkerClusterControl,
-  prevProps: MarkerClusterControl
-) => {
-  //TODO when prop change update instance
-  //   if (props. !== prevProps.center || props.size !== prevProps.size) {
-  //   instance.setBounds(getBounds(props))
-  // }
-};
-
-const MarkerClusterGroup = createPathComponent<
+export const MarkerClusterGroup = createPathComponent<
   L.MarkerClusterGroup,
   MarkerClusterControl
->(createMarkerClusterGroup, updateMarkerCluster);
-
-export default MarkerClusterGroup;
+>(createMarkerClusterGroup);
